@@ -33,3 +33,13 @@ This app is a free and open source solution for exploring, creating, and storing
 
 -   React Bootstrap:
     -   [Components documentation](https://react-bootstrap.github.io/components/alerts/)
+
+## Coding references
+
+### Use a button to switch pages
+
+```tsx
+<Button color="inherit" href={"/login"} LinkComponent={Link}>
+	Login
+</Button>
+```

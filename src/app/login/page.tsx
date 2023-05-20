@@ -25,18 +25,19 @@ import {
 	Box,
 	Grid,
 	Paper,
+	Typography,
 } from "@mui/material";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
+
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 // limitations under the License.
-interface RegisterPageProps {}
+interface LoginPageProps {}
 
 const theme = createTheme();
 
-const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
+const LoginPage: FunctionComponent<LoginPageProps> = () => {
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
@@ -96,81 +97,58 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 							<LockOutlinedIcon />
 						</Avatar>
 						<Typography component="h1" variant="h5">
-							Sign up
+							Sign in
 						</Typography>
 						<Box
 							component="form"
 							noValidate
 							onSubmit={handleSubmit}
-							sx={{ mt: 3 }}
+							sx={{ mt: 1 }}
 						>
-							<Grid container spacing={2}>
-								<Grid item xs={12} sm={6}>
-									<TextField
-										autoComplete="given-name"
-										name="firstName"
-										required
-										fullWidth
-										id="firstName"
-										label="First Name"
-										autoFocus
+							<TextField
+								margin="normal"
+								required
+								fullWidth
+								id="email"
+								label="Email Address"
+								name="email"
+								autoComplete="email"
+								autoFocus
+							/>
+							<TextField
+								margin="normal"
+								required
+								fullWidth
+								name="password"
+								label="Password"
+								type="password"
+								id="password"
+								autoComplete="current-password"
+							/>
+							<FormControlLabel
+								control={
+									<Checkbox
+										value="remember"
+										color="primary"
 									/>
-								</Grid>
-								<Grid item xs={12} sm={6}>
-									<TextField
-										required
-										fullWidth
-										id="lastName"
-										label="Last Name"
-										name="lastName"
-										autoComplete="family-name"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<TextField
-										required
-										fullWidth
-										id="email"
-										label="Email Address"
-										name="email"
-										autoComplete="email"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<TextField
-										required
-										fullWidth
-										name="password"
-										label="Password"
-										type="password"
-										id="password"
-										autoComplete="new-password"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<FormControlLabel
-										control={
-											<Checkbox
-												value="allowExtraEmails"
-												color="primary"
-											/>
-										}
-										label="I want to receive inspiration, marketing promotions and updates via email."
-									/>
-								</Grid>
-							</Grid>
+								}
+								label="Remember me"
+							/>
 							<Button
 								type="submit"
 								fullWidth
 								variant="contained"
 								sx={{ mt: 3, mb: 2 }}
 							>
-								Sign Up
+								Sign In
 							</Button>
-							<Grid container justifyContent="flex-end">
+							<Grid container>
+								<Grid item xs>
+									<Link href="#">Forgot password?</Link>
+								</Grid>
 								<Grid item>
-									<Link href="/login">
-										Already have an account? Sign in
+									<Link href="/register">
+										{"Don't have an account? Register!"}
 									</Link>
 								</Grid>
 							</Grid>
@@ -182,4 +160,4 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 	);
 };
 
-export default RegisterPage;
+export default LoginPage;
