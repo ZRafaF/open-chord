@@ -15,6 +15,13 @@ import { FunctionComponent } from "react";
 
 import Link from "next/link";
 
+import { auth, googleProvider } from "@config/firebase";
+import {
+	signInWithPopup,
+	setPersistence,
+	browserSessionPersistence,
+} from "firebase/auth";
+
 import {
 	Avatar,
 	Button,
@@ -29,6 +36,7 @@ import {
 } from "@mui/material";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import GoogleIcon from "@mui/icons-material/Google";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -38,6 +46,16 @@ interface LoginPageProps {}
 const theme = createTheme();
 
 const LoginPage: FunctionComponent<LoginPageProps> = () => {
+	const signInWithGoogle = async () => {
+		setPersistence(auth, browserSessionPersistence)
+			.then(() => {
+				return signInWithPopup(auth, googleProvider);
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+	};
+
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
@@ -97,7 +115,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 							<LockOutlinedIcon />
 						</Avatar>
 						<Typography component="h1" variant="h5">
-							Sign in
+							Login
 						</Typography>
 						<Box
 							component="form"
@@ -140,7 +158,17 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 								variant="contained"
 								sx={{ mt: 3, mb: 2 }}
 							>
-								Sign In
+								Login
+							</Button>
+							<Button
+								type="submit"
+								fullWidth
+								variant="outlined"
+								startIcon={<GoogleIcon />}
+								sx={{ mt: 3, mb: 2 }}
+								onClick={signInWithGoogle}
+							>
+								Login with google
 							</Button>
 							<Grid container>
 								<Grid item xs>

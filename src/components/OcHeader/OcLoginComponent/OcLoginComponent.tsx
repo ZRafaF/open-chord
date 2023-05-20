@@ -22,12 +22,22 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Link from "next/link";
 
+import { auth } from "@config/firebase";
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+
 const settings = ["Profile", "Account", "Login", "Logout"];
 
 // limitations under the License.
 interface OcLoginComponentProps {}
 
 const OcLoginComponent: FunctionComponent<OcLoginComponentProps> = () => {
+	const [user] = useAuthState(auth);
+
+	const getUserImageUrl = () => {
+		const url = user?.photoURL;
+		return url ? url : "/static/images/avatar/2.jpg";
+	};
+
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 	const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
 		setAnchorElUser(event.currentTarget);
@@ -36,8 +46,23 @@ const OcLoginComponent: FunctionComponent<OcLoginComponentProps> = () => {
 		setAnchorElUser(null);
 	};
 
-	const handleLogout = () => {
-		alert("LOGOUT");
+	const [signOut, loading, error] = useSignOut(auth);
+	if (error) {
+		return (
+			<div>
+				<p>Error: {error.message}</p>
+			</div>
+		);
+	}
+	if (loading) {
+		return <p>Loading...</p>;
+	}
+	const handleLogout = async () => {
+		try {
+			await signOut();
+		} catch (err) {
+			console.error(err);
+		}
 		handleCloseUserMenu();
 	};
 
@@ -45,7 +70,7 @@ const OcLoginComponent: FunctionComponent<OcLoginComponentProps> = () => {
 		<Box sx={{ flexGrow: 0 }}>
 			<Tooltip title="Open profile options">
 				<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-					<Avatar alt="" src="/static/images/avatar/2.jpg" />
+					<Avatar alt="" src={getUserImageUrl()} />
 				</IconButton>
 			</Tooltip>
 			<Menu
