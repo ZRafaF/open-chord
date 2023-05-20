@@ -1,13 +1,22 @@
 import OcHeader from "@/components/OcHeader/OcHeader";
 import "./globals.css";
-import { Inter } from "next/font/google";
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
-const inter = Inter({ subsets: ["latin"] });
+import { Roboto } from "next/font/google";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const roboto = Roboto({
+	weight: ["300", "400", "500", "700"],
+	style: ["normal", "italic"],
+
+	subsets: ["latin"],
+});
 
 export const metadata = {
 	title: "Create Next App",
@@ -21,8 +30,9 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			<body className={inter.className}>
+			<body className={roboto.className} style={{ margin: 0 }}>
 				<OcHeader />
+
 				{children}
 			</body>
 		</html>

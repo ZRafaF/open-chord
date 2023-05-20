@@ -10,8 +10,10 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
+// limitations under the License.
+
 "use client";
-import { FunctionComponent } from "react";
+import { ChangeEvent, FunctionComponent, useEffect, useState } from "react";
 
 import Link from "next/link";
 
@@ -26,28 +28,103 @@ import {
 	Grid,
 	Paper,
 } from "@mui/material";
+import GoogleIcon from "@mui/icons-material/Google";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {
+	useAuthState,
+	useCreateUserWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
+import { auth, googleProvider } from "@/config/firebase";
+import { signInWithPopup } from "firebase/auth";
 
-// limitations under the License.
+import { toast, ToastContainer } from "react-toastify";
+
+interface FormInterface {
+	email: string;
+	password: string;
+}
+
 interface RegisterPageProps {}
 
 const theme = createTheme();
 
 const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
+	const [user] = useAuthState(auth);
+	const [
+		createUserWithEmailAndPassword,
+		userRegister,
+		loadingRegister,
+		errorRegister,
+	] = useCreateUserWithEmailAndPassword(auth);
+	const nextRouter = useRouter();
+
+	useEffect(() => {
+		if (user) {
+			nextRouter.push("/");
+		}
+	}, [user]);
+
+	const registerWithGoogle = async () => {
+		signInWithPopup(auth, googleProvider).catch((error) => {
+			var errorMessage = error.message;
+			console.error(errorMessage);
+		});
+	};
+
+	if (errorRegister) {
+		const errorCode = errorRegister.code;
+		console.log("ERRORR", errorCode);
+		switch (errorCode) {
+			case "auth/invalid-email":
+				toast.error("Invalid email");
+				break;
+			case "auth/weak-password":
+				toast.error("Password is too weak");
+				break;
+
+			default:
+				toast.error(errorRegister.code);
+				break;
+		}
+	}
+
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const data = new FormData(event.currentTarget);
-		console.log({
-			email: data.get("email"),
-			password: data.get("password"),
+		const data: FormData = new FormData(event.currentTarget);
+		const submitEmail = data.get("email")?.toString();
+		const submitPassword = data.get("password")?.toString();
+
+		if (submitEmail === undefined) {
+			toast.error("Invalid email.");
+			return;
+		}
+		if (submitPassword === undefined) {
+			toast.error("Invalid password.");
+			return;
+		}
+		const checkedData: FormInterface = {
+			email: submitEmail,
+			password: submitPassword,
+		};
+
+		console.log(checkedData);
+
+		createUserWithEmailAndPassword(
+			checkedData.email,
+			checkedData.password
+		).then(() => {
+			alert("123");
 		});
 	};
 
 	return (
 		<ThemeProvider theme={theme}>
+			<ToastContainer />
+
 			<Grid
 				container
 				component="main"
@@ -147,17 +224,6 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 										autoComplete="new-password"
 									/>
 								</Grid>
-								<Grid item xs={12}>
-									<FormControlLabel
-										control={
-											<Checkbox
-												value="allowExtraEmails"
-												color="primary"
-											/>
-										}
-										label="I want to receive inspiration, marketing promotions and updates via email."
-									/>
-								</Grid>
 							</Grid>
 							<Button
 								type="submit"
@@ -165,7 +231,17 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 								variant="contained"
 								sx={{ mt: 3, mb: 2 }}
 							>
-								Sign Up
+								Register
+							</Button>
+							<Button
+								type="submit"
+								fullWidth
+								variant="outlined"
+								startIcon={<GoogleIcon />}
+								sx={{ mt: 3, mb: 2 }}
+								onClick={registerWithGoogle}
+							>
+								Register with google
 							</Button>
 							<Grid container justifyContent="flex-end">
 								<Grid item>

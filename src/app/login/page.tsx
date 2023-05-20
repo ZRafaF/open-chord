@@ -11,9 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 "use client";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect } from "react";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { auth, googleProvider } from "@config/firebase";
 import {
@@ -39,6 +40,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 // limitations under the License.
 interface LoginPageProps {}
@@ -46,6 +48,15 @@ interface LoginPageProps {}
 const theme = createTheme();
 
 const LoginPage: FunctionComponent<LoginPageProps> = () => {
+	const [user] = useAuthState(auth);
+	const nextRouter = useRouter();
+
+	useEffect(() => {
+		if (user) {
+			nextRouter.push("/");
+		}
+	}, [user]);
+
 	const signInWithGoogle = async () => {
 		setPersistence(auth, browserSessionPersistence)
 			.then(() => {

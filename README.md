@@ -18,7 +18,7 @@
 
 This app is a free and open source solution for exploring, creating, and storing different types of music notation.
 
-## [Website is here](https://zrafaf.github.io/open-chord/)
+## [Website is here](https://open-chord.vercel.app/)
 
 ## Development references:
 

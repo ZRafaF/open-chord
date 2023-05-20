@@ -24,16 +24,21 @@ import Link from "next/link";
 
 import { auth } from "@config/firebase";
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+import LoggedMenuItens from "./LoggedMenuItens/LoggedMenuItens";
+import GuestMenuItens from "./GuestMenuItens/GuestMenuItens";
 
 const settings = ["Profile", "Account", "Login", "Logout"];
 
 // limitations under the License.
-interface OcLoginComponentProps {}
+interface ProfileComponentProps {}
 
-const OcLoginComponent: FunctionComponent<OcLoginComponentProps> = () => {
-	const [user] = useAuthState(auth);
+const ProfileComponent: FunctionComponent<ProfileComponentProps> = () => {
+	const [user, loadingUser, errorUser] = useAuthState(auth);
 
 	const getUserImageUrl = () => {
+		if (loadingUser || errorUser) {
+			return "/static/images/avatar/2.jpg";
+		}
 		const url = user?.photoURL;
 		return url ? url : "/static/images/avatar/2.jpg";
 	};
@@ -44,26 +49,6 @@ const OcLoginComponent: FunctionComponent<OcLoginComponentProps> = () => {
 	};
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
-	};
-
-	const [signOut, loading, error] = useSignOut(auth);
-	if (error) {
-		return (
-			<div>
-				<p>Error: {error.message}</p>
-			</div>
-		);
-	}
-	if (loading) {
-		return <p>Loading...</p>;
-	}
-	const handleLogout = async () => {
-		try {
-			await signOut();
-		} catch (err) {
-			console.error(err);
-		}
-		handleCloseUserMenu();
 	};
 
 	return (
@@ -89,52 +74,16 @@ const OcLoginComponent: FunctionComponent<OcLoginComponentProps> = () => {
 				open={Boolean(anchorElUser)}
 				onClose={handleCloseUserMenu}
 			>
-				<MenuItem onClick={handleCloseUserMenu}>
-					<Typography>
-						<Link
-							href={`/profile`}
-							style={{
-								textDecoration: "none",
-								color: "#000",
-							}}
-						>
-							Profile
-						</Link>
-					</Typography>
-				</MenuItem>
-				<MenuItem onClick={handleCloseUserMenu}>
-					<Typography>
-						<Link
-							href={`/login`}
-							style={{
-								textDecoration: "none",
-								color: "#000",
-							}}
-						>
-							Login
-						</Link>
-					</Typography>
-				</MenuItem>
-				<MenuItem onClick={handleCloseUserMenu}>
-					<Typography>
-						<Link
-							href={`/my-songs`}
-							style={{
-								textDecoration: "none",
-								color: "#000",
-							}}
-						>
-							My songs
-						</Link>
-					</Typography>
-				</MenuItem>
-
-				<MenuItem onClick={handleLogout}>
-					<Typography>Logout</Typography>
-				</MenuItem>
+				{user ? (
+					<LoggedMenuItens
+						handleCloseUserMenu={handleCloseUserMenu}
+					/>
+				) : (
+					<GuestMenuItens handleCloseUserMenu={handleCloseUserMenu} />
+				)}
 			</Menu>
 		</Box>
 	);
 };
 
-export default OcLoginComponent;
+export default ProfileComponent;
