@@ -40,7 +40,11 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useAuthState } from "react-firebase-hooks/auth";
+import {
+	useAuthState,
+	useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
+import { toast } from "react-toastify";
 
 // limitations under the License.
 interface LoginPageProps {}
@@ -50,6 +54,8 @@ const theme = createTheme();
 const LoginPage: FunctionComponent<LoginPageProps> = () => {
 	const [user] = useAuthState(auth);
 	const nextRouter = useRouter();
+	const [signInWithEmailAndPassword, userSign, loadingSign, errorSign] =
+		useSignInWithEmailAndPassword(auth);
 
 	useEffect(() => {
 		if (user) {
@@ -69,11 +75,24 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const data = new FormData(event.currentTarget);
-		console.log({
-			email: data.get("email"),
-			password: data.get("password"),
-		});
+		const data: FormData = new FormData(event.currentTarget);
+		const submitEmail = data.get("email")?.toString();
+		const submitPassword = data.get("password")?.toString();
+
+		if (submitEmail === undefined) {
+			toast.error("Invalid email.");
+			return;
+		}
+		if (submitPassword === undefined) {
+			toast.error("Invalid password.");
+			return;
+		}
+		const checkedData: FormInterface = {
+			email: submitEmail,
+			password: submitPassword,
+		};
+
+		signInWithEmailAndPassword(checkedData.email, checkedData.password);
 	};
 
 	return (

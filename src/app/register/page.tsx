@@ -42,11 +42,8 @@ import { auth, googleProvider } from "@/config/firebase";
 import { signInWithPopup } from "firebase/auth";
 
 import { toast, ToastContainer } from "react-toastify";
-
-interface FormInterface {
-	email: string;
-	password: string;
-}
+import OcEmailField from "@/components/OcEmailField/OcEmailField";
+import OcPasswordField from "@/components/OcPasswordField/OcPasswordField";
 
 interface RegisterPageProps {}
 
@@ -113,12 +110,7 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 
 		console.log(checkedData);
 
-		createUserWithEmailAndPassword(
-			checkedData.email,
-			checkedData.password
-		).then(() => {
-			alert("123");
-		});
+		createUserWithEmailAndPassword(checkedData.email, checkedData.password);
 	};
 
 	return (
@@ -173,7 +165,7 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 							<LockOutlinedIcon />
 						</Avatar>
 						<Typography component="h1" variant="h5">
-							Sign up
+							Register
 						</Typography>
 						<Box
 							component="form"
@@ -182,47 +174,22 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 							sx={{ mt: 3 }}
 						>
 							<Grid container spacing={2}>
-								<Grid item xs={12} sm={6}>
+								<Grid item xs={12}>
 									<TextField
-										autoComplete="given-name"
-										name="firstName"
+										autoComplete="username"
+										name="username"
 										required
 										fullWidth
-										id="firstName"
-										label="First Name"
+										id="username"
+										label="Username"
 										autoFocus
 									/>
 								</Grid>
-								<Grid item xs={12} sm={6}>
-									<TextField
-										required
-										fullWidth
-										id="lastName"
-										label="Last Name"
-										name="lastName"
-										autoComplete="family-name"
-									/>
+								<Grid item xs={12}>
+									<OcEmailField />
 								</Grid>
 								<Grid item xs={12}>
-									<TextField
-										required
-										fullWidth
-										id="email"
-										label="Email Address"
-										name="email"
-										autoComplete="email"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<TextField
-										required
-										fullWidth
-										name="password"
-										label="Password"
-										type="password"
-										id="password"
-										autoComplete="new-password"
-									/>
+									<OcPasswordField />
 								</Grid>
 							</Grid>
 							<Button

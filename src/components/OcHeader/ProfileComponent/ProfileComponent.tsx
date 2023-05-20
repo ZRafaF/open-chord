@@ -11,37 +11,33 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 
-import { FunctionComponent, useState, MouseEvent } from "react";
+import { FunctionComponent, useState, MouseEvent, useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import Link from "next/link";
 
 import { auth } from "@config/firebase";
-import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import LoggedMenuItens from "./LoggedMenuItens/LoggedMenuItens";
 import GuestMenuItens from "./GuestMenuItens/GuestMenuItens";
 
-const settings = ["Profile", "Account", "Login", "Logout"];
+const emptyAvatarUrl = "/static/images/avatar/2.jpg";
 
 // limitations under the License.
 interface ProfileComponentProps {}
 
 const ProfileComponent: FunctionComponent<ProfileComponentProps> = () => {
 	const [user, loadingUser, errorUser] = useAuthState(auth);
+	const [avatarUrl, setAvatarUrl] = useState<string>(emptyAvatarUrl);
 
-	const getUserImageUrl = () => {
-		if (loadingUser || errorUser) {
-			return "/static/images/avatar/2.jpg";
-		}
+	useEffect(() => {
 		const url = user?.photoURL;
-		return url ? url : "/static/images/avatar/2.jpg";
-	};
+
+		setAvatarUrl(url ? url : emptyAvatarUrl);
+	}, [user]);
 
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 	const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
@@ -55,7 +51,7 @@ const ProfileComponent: FunctionComponent<ProfileComponentProps> = () => {
 		<Box sx={{ flexGrow: 0 }}>
 			<Tooltip title="Open profile options">
 				<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-					<Avatar alt="" src={getUserImageUrl()} />
+					<Avatar alt="" src={avatarUrl} />
 				</IconButton>
 			</Tooltip>
 			<Menu

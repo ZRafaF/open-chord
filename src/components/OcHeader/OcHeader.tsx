@@ -56,7 +56,7 @@ const OcHeader: FunctionComponent<OcHeaderProps> = () => {
 					<Typography
 						variant="h6"
 						noWrap
-						component="a"
+						component={Link}
 						href="/"
 						sx={{
 							mr: 2,
