@@ -11,19 +11,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-export {};
 
-declare global {
-	interface FormInterface {
-		email: string;
-		password: string;
-	}
+import { db } from "@/config/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
-	interface PlaylistDoc {
-		creator: string;
-		description: string;
-		name: string;
-		songIds: string[];
-		uid: string;
+const playlistsCollectionRef = collection(db, "playlists");
+
+export default async function getFormattedPlaylistDocs(): Promise<
+	PlaylistDoc[]
+> {
+	try {
+		const data = await getDocs(playlistsCollectionRef);
+
+		const formattedData: PlaylistDoc[] = data.docs.map((doc) => ({
+			id: doc.id,
+			...(doc.data() as PlaylistDoc),
+		}));
+		return formattedData;
+	} catch (error) {
+		throw error;
 	}
 }

@@ -24,11 +24,10 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import LoggedMenuItens from "./LoggedMenuItens/LoggedMenuItens";
 import GuestMenuItens from "./GuestMenuItens/GuestMenuItens";
 
-const emptyAvatarUrl = "/static/images/avatar/2.jpg";
-
 // limitations under the License.
 interface ProfileComponentProps {}
 
+const emptyAvatarUrl = "/static/images/avatar/1.jpg";
 const ProfileComponent: FunctionComponent<ProfileComponentProps> = () => {
 	const [user, loadingUser, errorUser] = useAuthState(auth);
 	const [avatarUrl, setAvatarUrl] = useState<string>(emptyAvatarUrl);

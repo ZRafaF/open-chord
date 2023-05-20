@@ -75,6 +75,20 @@ const LoggedMenuItens: FunctionComponent<LoggedMenuItensProps> = ({
 				</Typography>
 			</MenuItem>
 
+			<MenuItem onClick={handleCloseUserMenu}>
+				<Typography>
+					<Link
+						href={`/my-playlists`}
+						style={{
+							textDecoration: "none",
+							color: "#000",
+						}}
+					>
+						My playlists
+					</Link>
+				</Typography>
+			</MenuItem>
+
 			<MenuItem onClick={handleLogout}>
 				<Typography>Logout</Typography>
 			</MenuItem>
