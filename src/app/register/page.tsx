@@ -13,7 +13,7 @@
 // limitations under the License.
 
 "use client";
-import { ChangeEvent, FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect } from "react";
 
 import Link from "next/link";
 
@@ -63,7 +63,7 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 		if (user) {
 			nextRouter.push("/");
 		}
-	}, [user]);
+	}, [user, nextRouter]);
 
 	const registerWithGoogle = async () => {
 		signInWithPopup(auth, googleProvider).catch((error) => {

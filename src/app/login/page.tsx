@@ -58,10 +58,11 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 		useSignInWithEmailAndPassword(auth);
 
 	useEffect(() => {
+		console.log("update");
 		if (user) {
 			nextRouter.push("/");
 		}
-	}, [user]);
+	}, [user, nextRouter]);
 
 	const signInWithGoogle = async () => {
 		setPersistence(auth, browserSessionPersistence)
