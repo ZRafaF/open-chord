@@ -11,10 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 "use client";
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 import { auth, googleProvider } from "@config/firebase";
 import {
@@ -40,11 +39,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import {
-	useAuthState,
-	useSignInWithEmailAndPassword,
-} from "react-firebase-hooks/auth";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { toast } from "react-toastify";
+import useRedirectIfAuthenticated from "@/hooks/useRedirectIfAuthenticated";
 
 // limitations under the License.
 interface LoginPageProps {}
@@ -52,17 +49,10 @@ interface LoginPageProps {}
 const theme = createTheme();
 
 const LoginPage: FunctionComponent<LoginPageProps> = () => {
-	const [user] = useAuthState(auth);
-	const nextRouter = useRouter();
 	const [signInWithEmailAndPassword, userSign, loadingSign, errorSign] =
 		useSignInWithEmailAndPassword(auth);
 
-	useEffect(() => {
-		console.log("update");
-		if (user) {
-			nextRouter.push("/");
-		}
-	}, [user, nextRouter]);
+	useRedirectIfAuthenticated();
 
 	const signInWithGoogle = async () => {
 		setPersistence(auth, browserSessionPersistence)
@@ -88,12 +78,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 			toast.error("Invalid password.");
 			return;
 		}
-		const checkedData: FormInterface = {
-			email: submitEmail,
-			password: submitPassword,
-		};
 
-		signInWithEmailAndPassword(checkedData.email, checkedData.password);
+		signInWithEmailAndPassword(submitEmail, submitPassword);
 	};
 
 	return (

@@ -23,7 +23,8 @@
 			"@/*": ["./src/*"],
 			"@components/*": ["./src/components/*"],
 			"@config/*": ["./src/config/*"],
-			"@helper/*": ["./src/helper/*"]
+			"@helper/*": ["./src/helper/*"],
+			"@hooks/*": ["./src/hooks/*"]
 		}
 	},
 	"include": [

@@ -13,13 +13,11 @@
 // limitations under the License.
 
 import { db } from "@/config/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 
 const playlistsCollectionRef = collection(db, "playlists");
 
-export default async function getFormattedPlaylistDocs(): Promise<
-	PlaylistDoc[]
-> {
+export async function getFormattedPlaylistDocs(): Promise<PlaylistDoc[]> {
 	try {
 		const data = await getDocs(playlistsCollectionRef);
 
@@ -31,4 +29,24 @@ export default async function getFormattedPlaylistDocs(): Promise<
 	} catch (error) {
 		throw error;
 	}
+}
+
+const usersCollectionRef = collection(db, "users");
+
+export async function checkDuplicateDisplayName(
+	username: string
+): Promise<boolean> {
+	const q = query(usersCollectionRef, where("username", "==", username));
+	const querySnapshot = await getDocs(q);
+
+	return Boolean(querySnapshot.size);
+}
+
+export async function createUserDoc(uid: string, username: string) {
+	const newUserData: UserDoc = {
+		uid: uid,
+		username: username,
+	};
+
+	return addDoc(usersCollectionRef, newUserData);
 }

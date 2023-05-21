@@ -26,15 +26,16 @@ import {
 	Grid,
 	Typography,
 } from "@mui/material";
-import getFormattedPlaylistDocs from "@/helper/firestore";
+import { getFormattedPlaylistDocs } from "@/helper/firestore";
+import useRedirectIfAuthenticated from "@/hooks/useRedirectIfAuthenticated";
+import OcCreatePlaylist from "@/components/OcCreatePlaylist/OcCreatePlaylist";
 
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-
-import addIcon from "./add-icon-svgrepo-com.svg";
 interface MyPlaylistsPageProps {}
 
 const MyPlaylistsPage: FunctionComponent<MyPlaylistsPageProps> = () => {
 	const [playlistDocs, setPlaylistDocs] = useState<PlaylistDoc[]>([]);
+
+	useRedirectIfAuthenticated();
 
 	const getPlaylistList = async () => {
 		try {
@@ -98,43 +99,7 @@ const MyPlaylistsPage: FunctionComponent<MyPlaylistsPageProps> = () => {
 	return (
 		<Container fixed sx={{ my: 3 }}>
 			<Grid container spacing={4}>
-				<Grid item xs={12} sm={6} md={4}>
-					<Card
-						sx={{
-							height: "100%",
-							display: "flex",
-							flexDirection: "column",
-							bgcolor: "#f2f2f2",
-						}}
-					>
-						<CardActionArea
-							sx={{
-								height: "100%",
-								flexDirection: "column",
-							}}
-						>
-							<CardContent
-								sx={{
-									flexGrow: 1,
-								}}
-							>
-								<Typography
-									gutterBottom
-									variant="h5"
-									component="h2"
-								>
-									Create a new playlist
-								</Typography>
-								<CardMedia
-									component="img"
-									alt="Add icon"
-									height={120}
-									src="/add-plus.svg"
-								/>
-							</CardContent>
-						</CardActionArea>
-					</Card>
-				</Grid>
+				<OcCreatePlaylist />
 				{makeCards()}
 			</Grid>
 		</Container>

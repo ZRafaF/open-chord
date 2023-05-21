@@ -10,31 +10,23 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-
-import { Timestamp } from "firebase/firestore";
-
 // limitations under the License.
-export {};
 
-declare global {
-	interface PlaylistFormInterface {
-		playlistName: string;
-		description: string | undefined;
-		visibility: "public" | "private";
-	}
+import { auth } from "@/config/firebase";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-	interface PlaylistDoc {
-		creator: string;
-		dateOfCreation: Timestamp;
-		description: string;
-		name: string;
-		songIds: string[];
-		uid: string;
-		visibility: "public" | "private";
-	}
+const useRedirectIfAuthenticated = () => {
+	const [user] = useAuthState(auth);
+	const [startState] = useState(user);
+	const router = useRouter();
 
-	interface UserDoc {
-		uid: string;
-		username: string;
-	}
-}
+	useEffect(() => {
+		if (user !== startState) {
+			router.push("/");
+		}
+	}, [user, router, startState]);
+};
+
+export default useRedirectIfAuthenticated;

@@ -13,37 +13,24 @@
 // limitations under the License.
 
 "use client";
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import {
-	Avatar,
-	Button,
-	CssBaseline,
-	TextField,
-	FormControlLabel,
-	Checkbox,
-	Box,
-	Grid,
-	Paper,
-} from "@mui/material";
+import { Avatar, Button, CssBaseline, Box, Grid, Paper } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import {
-	useAuthState,
-	useCreateUserWithEmailAndPassword,
-} from "react-firebase-hooks/auth";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
 import { auth, googleProvider } from "@/config/firebase";
 import { signInWithPopup } from "firebase/auth";
 
-import { toast, ToastContainer } from "react-toastify";
-import OcEmailField from "@/components/OcEmailField/OcEmailField";
-import OcPasswordField from "@/components/OcPasswordField/OcPasswordField";
+import { ToastContainer } from "react-toastify";
+import OcEmailRegistration from "@/components/OcEmailRegistration/OcEmailRegistration";
+import OcPickUsername from "@/components/OcPickUsername/OcPickUsername";
 
 interface RegisterPageProps {}
 
@@ -51,12 +38,9 @@ const theme = createTheme();
 
 const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 	const [user] = useAuthState(auth);
-	const [
-		createUserWithEmailAndPassword,
-		userRegister,
-		loadingRegister,
-		errorRegister,
-	] = useCreateUserWithEmailAndPassword(auth);
+
+	const [username, setUsername] = useState<string | undefined>(undefined);
+
 	const nextRouter = useRouter();
 
 	useEffect(() => {
@@ -64,55 +48,12 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 			nextRouter.push("/");
 		}
 	}, [user, nextRouter]);
-
 	const registerWithGoogle = async () => {
 		signInWithPopup(auth, googleProvider).catch((error) => {
 			var errorMessage = error.message;
 			console.error(errorMessage);
 		});
 	};
-
-	if (errorRegister) {
-		const errorCode = errorRegister.code;
-		console.log("ERRORR", errorCode);
-		switch (errorCode) {
-			case "auth/invalid-email":
-				toast.error("Invalid email");
-				break;
-			case "auth/weak-password":
-				toast.error("Password is too weak");
-				break;
-
-			default:
-				toast.error(errorRegister.code);
-				break;
-		}
-	}
-
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		const data: FormData = new FormData(event.currentTarget);
-		const submitEmail = data.get("email")?.toString();
-		const submitPassword = data.get("password")?.toString();
-
-		if (submitEmail === undefined) {
-			toast.error("Invalid email.");
-			return;
-		}
-		if (submitPassword === undefined) {
-			toast.error("Invalid password.");
-			return;
-		}
-		const checkedData: FormInterface = {
-			email: submitEmail,
-			password: submitPassword,
-		};
-
-		console.log(checkedData);
-
-		createUserWithEmailAndPassword(checkedData.email, checkedData.password);
-	};
-
 	return (
 		<ThemeProvider theme={theme}>
 			<ToastContainer />
@@ -167,39 +108,12 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 						<Typography component="h1" variant="h5">
 							Register
 						</Typography>
-						<Box
-							component="form"
-							noValidate
-							onSubmit={handleSubmit}
-							sx={{ mt: 3 }}
-						>
-							<Grid container spacing={2}>
-								<Grid item xs={12}>
-									<TextField
-										autoComplete="username"
-										name="username"
-										required
-										fullWidth
-										id="username"
-										label="Username"
-										autoFocus
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<OcEmailField />
-								</Grid>
-								<Grid item xs={12}>
-									<OcPasswordField />
-								</Grid>
-							</Grid>
-							<Button
-								type="submit"
-								fullWidth
-								variant="contained"
-								sx={{ mt: 3, mb: 2 }}
-							>
-								Register
-							</Button>
+						<Box sx={{ mt: 3 }}>
+							{username ? (
+								<OcEmailRegistration username={username} />
+							) : (
+								<OcPickUsername setUsername={setUsername} />
+							)}
 							<Button
 								type="submit"
 								fullWidth

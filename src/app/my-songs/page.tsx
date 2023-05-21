@@ -25,12 +25,15 @@ import {
 	Grid,
 	Typography,
 } from "@mui/material";
-import getFormattedPlaylistDocs from "@/helper/firestore";
+import { getFormattedPlaylistDocs } from "@/helper/firestore";
+import useRedirectIfAuthenticated from "@/hooks/useRedirectIfAuthenticated";
 
 interface MySongsPageProps {}
 
 const MySongsPage: FunctionComponent<MySongsPageProps> = () => {
 	const [playlistDocs, setPlaylistDocs] = useState<PlaylistDoc[]>([]);
+
+	useRedirectIfAuthenticated();
 
 	const getPlaylistList = async () => {
 		try {

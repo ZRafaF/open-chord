@@ -15,10 +15,10 @@
 import React from "react";
 
 import { auth } from "@/config/firebase";
-import { MenuItem, Typography } from "@mui/material";
+import { Box, MenuItem, Paper, Typography } from "@mui/material";
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import { useSignOut } from "react-firebase-hooks/auth";
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 
 interface LoggedMenuItensProps {
 	handleCloseUserMenu: () => void;
@@ -28,6 +28,8 @@ const LoggedMenuItens: FunctionComponent<LoggedMenuItensProps> = ({
 	handleCloseUserMenu,
 }) => {
 	const [signOut, loading, error] = useSignOut(auth);
+	const [user] = useAuthState(auth);
+
 	if (error) {
 		return (
 			<div>
@@ -48,6 +50,30 @@ const LoggedMenuItens: FunctionComponent<LoggedMenuItensProps> = ({
 	};
 	return (
 		<React.Fragment>
+			<Box
+				sx={{
+					display: "flex",
+					alignItems: "center",
+					textAlign: "center",
+				}}
+				p={1}
+			>
+				<Paper
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						width: "100%",
+					}}
+					variant="outlined"
+				>
+					<Typography px={1} variant="caption">
+						Logged as:
+					</Typography>
+					<Typography px={1} color={"primary"}>
+						{user?.displayName}
+					</Typography>
+				</Paper>
+			</Box>
 			<MenuItem onClick={handleCloseUserMenu}>
 				<Typography>
 					<Link
