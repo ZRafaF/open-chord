@@ -10,30 +10,28 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
+// limitations under the License.
 
-import { checkDuplicateDisplayName } from "@/helper/firestore";
 import { TextField } from "@mui/material";
 import { ChangeEvent, FunctionComponent, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import checkUsername from "../../../helper/usernameChecker";
 
-// limitations under the License.
 interface OcUsernameFieldProps {}
 
-const OcUsernameField: FunctionComponent<OcUsernameFieldProps> = () => {
+const OcUsernameField: FunctionComponent<OcUsernameFieldProps> = ({}) => {
 	const [error, setError] = useState<boolean>(false);
 	const [helperMessage, setHelperMessage] = useState<string>("");
 	const debounced = useDebouncedCallback(
-		async (value) => {
-			const isDup = await checkDuplicateDisplayName(value);
-			if (isDup) {
-				setError(true);
-				setHelperMessage("This username is already taken");
-			} else if (value.length == 0) {
-				setError(true);
-			} else {
-				setError(false);
-				setHelperMessage("");
-			}
+		async (value: string) => {
+			checkUsername(value)
+				.then((response) => {
+					setError(response.hasError);
+					setHelperMessage(response.errorMessage);
+				})
+				.catch((e) => {
+					console.error(e);
+				});
 		},
 		// delay in ms
 		1000

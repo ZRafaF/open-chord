@@ -15,7 +15,6 @@
 import {
 	Box,
 	Button,
-	Checkbox,
 	Container,
 	CssBaseline,
 	FormControlLabel,
@@ -160,13 +159,12 @@ const OcCreatePlaylist: FunctionComponent<OcCreatePlaylistProps> = () => {
 										</RadioGroup>
 									</Grid>
 								</Grid>
-								<Grid container spacing={2}>
+								<Grid container spacing={2} my={1}>
 									<Grid item xs={12} sm={6}>
 										<Button
 											type="button"
 											fullWidth
 											variant="outlined"
-											sx={{ mt: 3, mb: 2 }}
 											onClick={handleClose}
 										>
 											Cancel
@@ -177,7 +175,6 @@ const OcCreatePlaylist: FunctionComponent<OcCreatePlaylistProps> = () => {
 											type="submit"
 											fullWidth
 											variant="contained"
-											sx={{ mt: 3, mb: 2 }}
 										>
 											Create
 										</Button>

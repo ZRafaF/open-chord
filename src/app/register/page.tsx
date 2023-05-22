@@ -17,20 +17,19 @@ import { FunctionComponent, useEffect, useState } from "react";
 
 import Link from "next/link";
 
-import { Avatar, Button, CssBaseline, Box, Grid, Paper } from "@mui/material";
-import GoogleIcon from "@mui/icons-material/Google";
+import { Avatar, CssBaseline, Box, Grid, Paper } from "@mui/material";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
-import { auth, googleProvider } from "@/config/firebase";
-import { signInWithPopup } from "firebase/auth";
+import { auth } from "@/config/firebase";
 
 import { ToastContainer } from "react-toastify";
 import OcEmailRegistration from "@/components/OcEmailRegistration/OcEmailRegistration";
 import OcPickUsername from "@/components/OcPickUsername/OcPickUsername";
+import OcRegisterWithGoogle from "@/components/OcRegisterWithGoogle/OcRegisterWithGoogle";
 
 interface RegisterPageProps {}
 
@@ -48,12 +47,7 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 			nextRouter.push("/");
 		}
 	}, [user, nextRouter]);
-	const registerWithGoogle = async () => {
-		signInWithPopup(auth, googleProvider).catch((error) => {
-			var errorMessage = error.message;
-			console.error(errorMessage);
-		});
-	};
+
 	return (
 		<ThemeProvider theme={theme}>
 			<ToastContainer />
@@ -112,18 +106,13 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 							{username ? (
 								<OcEmailRegistration username={username} />
 							) : (
-								<OcPickUsername setUsername={setUsername} />
+								<OcPickUsername
+									usernameCallback={(u) => {
+										setUsername(u);
+									}}
+								/>
 							)}
-							<Button
-								type="submit"
-								fullWidth
-								variant="outlined"
-								startIcon={<GoogleIcon />}
-								sx={{ mt: 3, mb: 2 }}
-								onClick={registerWithGoogle}
-							>
-								Register with google
-							</Button>
+							<OcRegisterWithGoogle />
 							<Grid container justifyContent="flex-end">
 								<Grid item>
 									<Link href="/login">

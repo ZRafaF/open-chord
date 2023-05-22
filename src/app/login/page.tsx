@@ -36,12 +36,12 @@ import {
 } from "@mui/material";
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import GoogleIcon from "@mui/icons-material/Google";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { toast } from "react-toastify";
 import useRedirectIfAuthenticated from "@/hooks/useRedirectIfAuthenticated";
+import OcRegisterWithGoogle from "@/components/OcRegisterWithGoogle/OcRegisterWithGoogle";
 
 // limitations under the License.
 interface LoginPageProps {}
@@ -54,21 +54,12 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 
 	useRedirectIfAuthenticated();
 
-	const signInWithGoogle = async () => {
-		setPersistence(auth, browserSessionPersistence)
-			.then(() => {
-				return signInWithPopup(auth, googleProvider);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
-	};
-
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const data: FormData = new FormData(event.currentTarget);
 		const submitEmail = data.get("email")?.toString();
 		const submitPassword = data.get("password")?.toString();
+		const submitRemember = data.get("remember")?.toString();
 
 		if (submitEmail === undefined) {
 			toast.error("Invalid email.");
@@ -77,6 +68,10 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 		if (submitPassword === undefined) {
 			toast.error("Invalid password.");
 			return;
+		}
+
+		if (submitRemember) {
+			setPersistence(auth, browserSessionPersistence);
 		}
 
 		signInWithEmailAndPassword(submitEmail, submitPassword);
@@ -165,6 +160,8 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 									<Checkbox
 										value="remember"
 										color="primary"
+										name="remember"
+										id="remember"
 									/>
 								}
 								label="Remember me"
@@ -177,16 +174,7 @@ const LoginPage: FunctionComponent<LoginPageProps> = () => {
 							>
 								Login
 							</Button>
-							<Button
-								type="submit"
-								fullWidth
-								variant="outlined"
-								startIcon={<GoogleIcon />}
-								sx={{ mt: 3, mb: 2 }}
-								onClick={signInWithGoogle}
-							>
-								Login with google
-							</Button>
+							<OcRegisterWithGoogle />
 							<Grid container>
 								<Grid item xs>
 									<Link href="#">Forgot password?</Link>

@@ -13,34 +13,38 @@
 // limitations under the License.
 
 import { Box, Button, Grid } from "@mui/material";
-import { Dispatch, FormEvent, FunctionComponent, SetStateAction } from "react";
+import { FormEvent, FunctionComponent } from "react";
 import OcUsernameField from "./OcUsernameField/OcUsernameField";
-import { toast } from "react-toastify";
-import { checkDuplicateDisplayName } from "@/helper/firestore";
+import { ToastContainer, toast } from "react-toastify";
+import checkUsername from "@/helper/usernameChecker";
 interface OcPickUsernameProps {
-	setUsername: Dispatch<SetStateAction<string | undefined>>;
+	usernameCallback: (username: string) => void;
 }
 
 const OcPickUsername: FunctionComponent<OcPickUsernameProps> = ({
-	setUsername,
+	usernameCallback,
 }) => {
 	const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const data: FormData = new FormData(event.currentTarget);
-		const submitUsername = data.get("username")?.toString();
 
-		if (submitUsername === undefined) {
-			toast.error("Invalid username.");
-			return;
-		}
-		if (await checkDuplicateDisplayName(submitUsername)) {
-			toast.error("This username is already taken.");
-			return;
-		}
-		setUsername(submitUsername);
+		const value = data.get("username")?.toString();
+
+		checkUsername(value)
+			.then((response) => {
+				if (response.hasError) toast.error(response.errorMessage);
+
+				if (!response.hasError && value !== undefined) {
+					usernameCallback(value);
+				}
+			})
+			.catch((e) => {
+				console.error(e);
+			});
 	};
 	return (
 		<Box component="form" noValidate onSubmit={handleSubmit}>
+			<ToastContainer />
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
 					<OcUsernameField />

@@ -42,6 +42,19 @@ export async function checkDuplicateDisplayName(
 	return Boolean(querySnapshot.size);
 }
 
+export async function getFormattedUserDoc(uid: string): Promise<UserDoc[]> {
+	const q = query(usersCollectionRef, where("uid", "==", uid));
+	const querySnapshot = await getDocs(q);
+
+	const formattedData: UserDoc[] = querySnapshot.docs.map((doc) => {
+		return {
+			uid: doc.data().uid,
+			username: doc.data().username,
+		} as UserDoc;
+	});
+	return formattedData;
+}
+
 export async function createUserDoc(uid: string, username: string) {
 	const newUserData: UserDoc = {
 		uid: uid,
