@@ -17,15 +17,15 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-const useRedirectIfAuthenticated = () => {
+const useRedirectIfNotAuthenticated = () => {
 	const [user] = useAuthState(auth);
 	const router = useRouter();
 
 	useEffect(() => {
-		if (user !== null) {
+		if (user === null) {
 			router.push("/");
 		}
 	}, [user, router]);
 };
 
-export default useRedirectIfAuthenticated;
+export default useRedirectIfNotAuthenticated;

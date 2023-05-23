@@ -43,3 +43,17 @@ This app is a free and open source solution for exploring, creating, and storing
 	Login
 </Button>
 ```
+
+### How to make a query using react-firebase-hooks
+
+```tsx
+import { query, where } from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
+
+const [PlaylistsCollection, loadingPlaylists, errorPlaylists] = useCollection(
+	query(playlistsCollectionRef, where("uid", "==", "asdasda172ebd1yndj")),
+	{
+		snapshotListenOptions: { includeMetadataChanges: true },
+	}
+);
+```

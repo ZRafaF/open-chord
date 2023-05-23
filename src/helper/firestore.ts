@@ -13,9 +13,17 @@
 // limitations under the License.
 
 import { db } from "@/config/firebase";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+	addDoc,
+	collection,
+	deleteDoc,
+	doc,
+	getDocs,
+	query,
+	where,
+} from "firebase/firestore";
 
-const playlistsCollectionRef = collection(db, "playlists");
+export const playlistsCollectionRef = collection(db, "playlists");
 
 export async function getFormattedPlaylistDocs(): Promise<PlaylistDoc[]> {
 	try {
@@ -29,6 +37,34 @@ export async function getFormattedPlaylistDocs(): Promise<PlaylistDoc[]> {
 	} catch (error) {
 		throw error;
 	}
+}
+
+export async function getMyFormattedPlaylistDocs(
+	uid: string
+): Promise<PlaylistDoc[]> {
+	const q = query(playlistsCollectionRef, where("uid", "==", uid));
+	const querySnapshot = await getDocs(q);
+
+	const formattedData: PlaylistDoc[] = querySnapshot.docs.map((doc) => {
+		return {
+			creator: doc.data().creator,
+			dateOfCreation: doc.data().dateOfCreation,
+			description: doc.data().description,
+			name: doc.data().name,
+			songIds: doc.data().songIds,
+			uid: doc.data().uid,
+			visibility: doc.data().visibility,
+		} as PlaylistDoc;
+	});
+	return formattedData;
+}
+
+export async function createPlaylistDoc(newPlaylistDoc: PlaylistDoc) {
+	return addDoc(playlistsCollectionRef, newPlaylistDoc);
+}
+
+export async function deletePlaylistDoc(id: string) {
+	return deleteDoc(doc(db, "playlists", id));
 }
 
 const usersCollectionRef = collection(db, "users");

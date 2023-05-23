@@ -30,6 +30,7 @@ import { ToastContainer } from "react-toastify";
 import OcEmailRegistration from "@/components/OcEmailRegistration/OcEmailRegistration";
 import OcPickUsername from "@/components/OcPickUsername/OcPickUsername";
 import OcRegisterWithGoogle from "@/components/OcRegisterWithGoogle/OcRegisterWithGoogle";
+import useRedirectIfAuthenticated from "@/hooks/useRedirectIfAuthenticated";
 
 interface RegisterPageProps {}
 
@@ -42,11 +43,7 @@ const RegisterPage: FunctionComponent<RegisterPageProps> = () => {
 
 	const nextRouter = useRouter();
 
-	useEffect(() => {
-		if (user) {
-			nextRouter.push("/");
-		}
-	}, [user, nextRouter]);
+	useRedirectIfAuthenticated();
 
 	return (
 		<ThemeProvider theme={theme}>

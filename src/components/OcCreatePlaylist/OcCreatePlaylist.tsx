@@ -30,23 +30,34 @@ import {
 import React, { ChangeEvent, FunctionComponent, useState } from "react";
 import CreatePlaylistCard from "./CreatePlaylistCard/CreatePlaylistCard";
 import { ToastContainer, toast } from "react-toastify";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/config/firebase";
+import { Timestamp, serverTimestamp } from "firebase/firestore";
+import { createPlaylistDoc } from "@/helper/firestore";
+import { LoadingButton } from "@mui/lab";
 
 interface OcCreatePlaylistProps {}
 
 const OcCreatePlaylist: FunctionComponent<OcCreatePlaylistProps> = () => {
+	const [user] = useAuthState(auth);
 	const [open, setOpen] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
 	const [playlistNameError, setPlaylistNameError] = useState<boolean>(false);
 
 	const handleOpen = () => setOpen(true);
-	const handleClose = () => setOpen(false);
+	const handleClose = () => {
+		setSubmitting(false);
+		setOpen(false);
+	};
 
 	const isValidName = (name: string): boolean => {
 		if (name.length) return true;
 		return false;
 	};
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
+
 		const data = new FormData(event.currentTarget);
 
 		const playlistName = data.get("playlist-name")?.toString();
@@ -65,19 +76,56 @@ const OcCreatePlaylist: FunctionComponent<OcCreatePlaylistProps> = () => {
 			toast.error("Invalid visibility.");
 			return;
 		}
+		setSubmitting(true);
+		const creatorV = user?.displayName;
+		const dateOfCreationV = (await serverTimestamp()) as Timestamp;
+		const descriptionV: string = description ? description : "";
+		const nameV = playlistName;
+		const songIdsV: string[] = [];
+		const uidV = user?.uid;
+		const visibilityV = visibility;
 
-		const formattedData: PlaylistFormInterface = {
-			playlistName: playlistName,
-			description: description,
-			visibility: visibility,
+		if (typeof creatorV !== "string" || typeof uidV !== "string") {
+			toast.error("Something went wrong.");
+			handleClose;
+
+			return;
+		}
+
+		const newPlaylistDoc: PlaylistDoc = {
+			creator: creatorV,
+			dateOfCreation: dateOfCreationV,
+			description: descriptionV,
+			name: nameV,
+			songIds: songIdsV,
+			uid: uidV,
+			visibility: visibilityV,
 		};
+
+		console.log(newPlaylistDoc);
+
+		console.log(await createPlaylistDoc(newPlaylistDoc));
+
 		handleClose();
-		console.log(formattedData);
 	};
 
 	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const inputValue = event.target.value;
 		setPlaylistNameError(!isValidName(inputValue));
+	};
+
+	const getSubmitButton = () => {
+		if (submitting)
+			return (
+				<LoadingButton loading variant="outlined">
+					Submit
+				</LoadingButton>
+			);
+		return (
+			<Button type="submit" fullWidth variant="contained">
+				Create
+			</Button>
+		);
 	};
 
 	return (
@@ -171,13 +219,7 @@ const OcCreatePlaylist: FunctionComponent<OcCreatePlaylistProps> = () => {
 										</Button>
 									</Grid>
 									<Grid item xs={12} sm={6}>
-										<Button
-											type="submit"
-											fullWidth
-											variant="contained"
-										>
-											Create
-										</Button>
+										{getSubmitButton()}
 									</Grid>
 								</Grid>
 							</Box>

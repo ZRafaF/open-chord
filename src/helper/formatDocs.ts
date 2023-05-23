@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { auth } from "@/config/firebase";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
-const useRedirectIfAuthenticated = () => {
-	const [user] = useAuthState(auth);
-	const router = useRouter();
-
-	useEffect(() => {
-		if (user !== null) {
-			router.push("/");
-		}
-	}, [user, router]);
+export const formatPlaylistDoc = (
+	doc: QueryDocumentSnapshot<DocumentData>
+): PlaylistDoc => {
+	const data = doc.data();
+	const newPlaylistDoc: PlaylistDoc = {
+		creator: data.creator,
+		dateOfCreation: data.dateOfCreation,
+		description: data.description,
+		name: data.name,
+		songIds: data.songIds,
+		uid: data.uid,
+		visibility: data.visibility,
+	};
+	return newPlaylistDoc;
 };
-
-export default useRedirectIfAuthenticated;

@@ -13,7 +13,7 @@
 // limitations under the License.
 "use client";
 
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, use, useEffect, useState } from "react";
 
 import {
 	Button,
@@ -21,21 +21,44 @@ import {
 	CardActionArea,
 	CardActions,
 	CardContent,
-	CardMedia,
 	Container,
 	Grid,
 	Typography,
 } from "@mui/material";
-import { getFormattedPlaylistDocs } from "@/helper/firestore";
-import useRedirectIfAuthenticated from "@/hooks/useRedirectIfAuthenticated";
+import {
+	getFormattedPlaylistDocs,
+	playlistsCollectionRef,
+} from "@/helper/firestore";
 import OcCreatePlaylist from "@/components/OcCreatePlaylist/OcCreatePlaylist";
+import { query, where } from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { auth, db } from "@/config/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import useRedirectIfNotAuthenticated from "@/hooks/useRedirectIfNotAuthenticated";
+import OcPlaylistCard from "@/components/OcPlaylistCard/OcPlaylistCard";
+import { formatPlaylistDoc } from "@/helper/formatDocs";
 
 interface MyPlaylistsPageProps {}
 
 const MyPlaylistsPage: FunctionComponent<MyPlaylistsPageProps> = () => {
 	const [playlistDocs, setPlaylistDocs] = useState<PlaylistDoc[]>([]);
+	const [user] = useAuthState(auth);
 
-	useRedirectIfAuthenticated();
+	const getUid = (): string => {
+		const uid = user?.uid;
+		if (typeof uid === "string") return uid;
+		return "";
+	};
+
+	const [PlaylistsCollection, loadingPlaylists, errorPlaylists] =
+		useCollection(
+			query(playlistsCollectionRef, where("uid", "==", getUid())),
+			{
+				snapshotListenOptions: { includeMetadataChanges: true },
+			}
+		);
+
+	useRedirectIfNotAuthenticated();
 
 	const getPlaylistList = async () => {
 		try {
@@ -50,46 +73,14 @@ const MyPlaylistsPage: FunctionComponent<MyPlaylistsPageProps> = () => {
 	}, []);
 
 	const makeCards = () => {
-		const cards = playlistDocs.map((playlist) => {
+		if (PlaylistsCollection === undefined) return;
+		const cards = PlaylistsCollection.docs.map((doc) => {
 			return (
-				<Grid item key={playlist.name} xs={12} sm={6} md={4}>
-					<Card
-						sx={{
-							height: "100%",
-							display: "flex",
-							flexDirection: "column",
-						}}
-					>
-						<CardActionArea
-							sx={{
-								height: "100%",
-							}}
-						>
-							<CardContent sx={{ flexGrow: 1 }}>
-								<Typography
-									gutterBottom
-									variant="h5"
-									component="h2"
-								>
-									{playlist.name}
-								</Typography>
-								<Typography
-									sx={{ mb: 1.5 }}
-									color="text.secondary"
-								>
-									Playlist made by: {playlist.creator}
-								</Typography>
-								<Typography>{playlist.description} </Typography>
-							</CardContent>
-						</CardActionArea>
-						<CardActions>
-							<Button size="small">
-								View {playlist.songIds.length} song(s)
-							</Button>
-							<Button size="small">Edit</Button>
-						</CardActions>
-					</Card>
-				</Grid>
+				<OcPlaylistCard
+					key={doc.id}
+					id={doc.id}
+					content={formatPlaylistDoc(doc)}
+				/>
 			);
 		});
 
