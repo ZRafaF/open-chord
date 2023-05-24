@@ -15,16 +15,7 @@
 
 import React, { FunctionComponent, use, useEffect, useState } from "react";
 
-import {
-	Button,
-	Card,
-	CardActionArea,
-	CardActions,
-	CardContent,
-	Container,
-	Grid,
-	Typography,
-} from "@mui/material";
+import { Container, Grid } from "@mui/material";
 import {
 	getFormattedPlaylistDocs,
 	playlistsCollectionRef,
@@ -32,7 +23,7 @@ import {
 import OcCreatePlaylist from "@/components/OcCreatePlaylist/OcCreatePlaylist";
 import { query, where } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import useRedirectIfNotAuthenticated from "@/hooks/useRedirectIfNotAuthenticated";
 import OcPlaylistCard from "@/components/OcPlaylistCard/OcPlaylistCard";

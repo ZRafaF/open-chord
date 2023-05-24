@@ -16,76 +16,79 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 
 import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	CardMedia,
 	Container,
+	Divider,
 	Grid,
+	List,
+	ListItem,
+	ListItemText,
+	Paper,
+	Stack,
 	Typography,
 } from "@mui/material";
-import { getFormattedPlaylistDocs } from "@/helper/firestore";
 import useRedirectIfNotAuthenticated from "@/hooks/useRedirectIfNotAuthenticated";
+import OcSongCard from "@/components/OcSongCard/OcSongCard";
 
 interface MySongsPageProps {}
 
 const MySongsPage: FunctionComponent<MySongsPageProps> = () => {
-	const [playlistDocs, setPlaylistDocs] = useState<PlaylistDoc[]>([]);
-
 	useRedirectIfNotAuthenticated();
 
-	const getPlaylistList = async () => {
-		try {
-			setPlaylistDocs(await getFormattedPlaylistDocs());
-		} catch (err) {
-			console.error(err);
-		}
-	};
-
-	useEffect(() => {
-		getPlaylistList();
-	}, []);
-
-	const makeCards = () => {
-		const cards = playlistDocs.map((playlist) => {
-			return (
-				<Grid item key={playlist.name} xs={12} sm={6} md={4}>
-					<Card
-						sx={{
-							height: "100%",
-							display: "flex",
-							flexDirection: "column",
-						}}
-					>
-						<CardContent sx={{ flexGrow: 1 }}>
-							<Typography
-								gutterBottom
-								variant="h5"
-								component="h2"
-							>
-								{playlist.name}
-							</Typography>
-							<Typography sx={{ mb: 1.5 }} color="text.secondary">
-								Playlist made by: {playlist.creator}
-							</Typography>
-							<Typography>{playlist.description} </Typography>
-						</CardContent>
-						<CardActions>
-							<Button size="small">
-								View {playlist.songIds.length} song(s)
-							</Button>
-							<Button size="small">Edit</Button>
-						</CardActions>
-					</Card>
-				</Grid>
-			);
-		});
-
-		return cards;
-	};
-
-	return <Container fixed>My songs</Container>;
+	return (
+		<Container fixed sx={{ my: 3 }}>
+			<Stack
+				direction={{ xs: "column", sm: "column", md: "row" }}
+				spacing={{ xs: 1, sm: 2, md: 4 }}
+			>
+				<Paper
+					sx={{
+						width: "100%",
+						py: 2,
+					}}
+					elevation={3}
+				>
+					<Typography variant="h4" align="center">
+						Favorites
+					</Typography>
+					<List aria-label="mailbox folders">
+						<ListItem>
+							<OcSongCard />
+						</ListItem>
+						<ListItem>
+							<OcSongCard />
+						</ListItem>
+						<ListItem>
+							<OcSongCard />
+						</ListItem>
+						<ListItem>
+							<OcSongCard />
+						</ListItem>
+					</List>
+				</Paper>
+				<List
+					sx={{
+						width: "100%",
+						bgcolor: "background.paper",
+					}}
+					component="nav"
+					aria-label="mailbox folders"
+				>
+					<ListItem divider>
+						<OcSongCard />
+					</ListItem>
+					<ListItem divider>
+						<OcSongCard />
+					</ListItem>
+					<ListItem divider>
+						<OcSongCard />
+					</ListItem>
+					<ListItem divider>
+						<OcSongCard />
+					</ListItem>
+				</List>
+			</Stack>
+		</Container>
+	);
 };
 
 export default MySongsPage;

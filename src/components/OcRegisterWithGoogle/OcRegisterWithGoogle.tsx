@@ -39,7 +39,7 @@ const OcRegisterWithGoogle: FunctionComponent<
 			sx={{ mt: 3, mb: 2 }}
 			onClick={registerWithGoogle}
 		>
-			Register with google
+			Login with google
 		</Button>
 	);
 };

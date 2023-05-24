@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 "use client";
+
 import React, { FunctionComponent } from "react";
 
 import styleModule from "./OcHeader.module.css";
@@ -21,13 +22,8 @@ import styleModule from "./OcHeader.module.css";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
 import Link from "next/link";
 
 import ProfileComponent from "./ProfileComponent/ProfileComponent";
@@ -38,18 +34,6 @@ interface OcHeaderProps {}
 const pages = ["Browse", "New Song"];
 
 const OcHeader: FunctionComponent<OcHeaderProps> = () => {
-	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-		null
-	);
-
-	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorElNav(event.currentTarget);
-	};
-
-	const handleCloseNavMenu = () => {
-		setAnchorElNav(null);
-	};
-
 	return (
 		<AppBar position="sticky">
 			<Container maxWidth="xl">

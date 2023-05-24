@@ -47,21 +47,15 @@ const OcPlaylistCard: FunctionComponent<OcPlaylistCardProps> = ({
 					flexDirection: "column",
 				}}
 			>
-				<CardActionArea
-					sx={{
-						height: "100%",
-					}}
-				>
-					<CardContent sx={{ flexGrow: 1 }}>
-						<Typography gutterBottom variant="h5" component="h2">
-							{content.name}
-						</Typography>
-						<Typography sx={{ mb: 1.5 }} color="text.secondary">
-							Playlist made by: {content.creator}
-						</Typography>
-						<Typography>{content.description} </Typography>
-					</CardContent>
-				</CardActionArea>
+				<CardContent sx={{ flexGrow: 1 }}>
+					<Typography gutterBottom variant="h5" component="h2">
+						{content.name}
+					</Typography>
+					<Typography sx={{ mb: 1.5 }} color="text.secondary">
+						Playlist made by: {content.creator}
+					</Typography>
+					<Typography>{content.description} </Typography>
+				</CardContent>
 				<CardActions>
 					<Button size="small">
 						View {content.songIds.length} song(s)
